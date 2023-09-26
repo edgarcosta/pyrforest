@@ -36,17 +36,8 @@ allfiles_in_lib = [
 ]
 
 rforest_sources = [
-    elt
-    for elt in allfiles_in_lib
-    if elt.endswith(".c") and
-    elt != "test_rforest.c"
+    elt for elt in allfiles_in_lib if elt.endswith(".c") and elt != "test_rforest.c"
 ]
-
-
-
-
-
-
 
 
 pyrforest = Extension(
@@ -58,7 +49,16 @@ pyrforest = Extension(
     + rforest_sources,
     libraries=["gmp", "m"],
     include_dirs=sage_include_directories() + ["pyrforest/lib/"],
-    extra_compile_args=["-O3 -fPIC -fomit-frame-pointer -funroll-loops -m64 -pedantic -std=gnu11"]
+    extra_compile_args=[
+        "-O3",
+        "-fPIC",
+        "-fomit-frame-pointer",
+        "-funroll-loops",
+        "-m64",
+        "-std=gnu11",
+        "-Wno-sign-compare",
+        "-Wno-unused-function",
+    ],
 )
 
 setup(
@@ -66,8 +66,8 @@ setup(
     author="Edgar Costa",
     author_email="edgarc@mit.edu",
     url="https://github.com/edgarcosta/pyrforest",
-    license="GNU General Public License, version 3",
-    description="Wrapper for C library for evaluating higher-dimensional modular equations",
+    license="MIT",
+    description="Wrapper for C library rforest to compute remainder forests",
     long_description=readfile("README.md"),  # get the long description from the README
     version=readfile("VERSION"),  # the VERSION file is shared with the documentation
     classifiers=[
@@ -78,7 +78,7 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Mathematics",
-        "License :: OSI Approved :: GNU General Public License v2 or v3",
+        "License :: OSI Approved :: MIT",
         "Programming Language :: Python :: 3.7",
     ],  # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords="sagemath rforest",
@@ -94,4 +94,3 @@ setup(
     # ext_modules = extensions,
     # cmdclass = {'test': SageTest, 'build_ext': Cython.Build.build_ext} # adding a special setup command for tests and build_ext
 )
-
