@@ -1,7 +1,7 @@
 # rforest
 
 
-This directory contains the content of https://math.mit.edu/~drew/rforest_v1.0.tar
+This directory contains the content of https://math.mit.edu/~drew/rforest_v1.0.tar (with some minor edits to silence some compiler warnings).
 
 The author is [Andrew V. Sutherland](https://math.mit.edu/~drew/)
 
