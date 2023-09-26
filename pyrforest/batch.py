@@ -55,4 +55,4 @@ def batch_harmonic(n, e, a, b, j, proj=False):
     ans = remainder_forest(M, m, k, kbase=1, indices=prime_range(n), V=V)
     if proj:
         return ans
-    return {p: mat[0, 0] * mat[0, 1].inverse_mod(p**e) for p, mat in ans}
+    return {p: mat[0, 0] * mat[0, 1].inverse_mod(p**e) for p, mat in ans.items()}
