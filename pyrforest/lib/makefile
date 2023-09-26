@@ -18,6 +18,7 @@ all: librforest.a $(PROGRAMS)
 
 clean:
 	rm -f *.o
+	rm -f fft62/*.o
 	rm -f librforest.a $(PROGRAMS)
 
 install: all
