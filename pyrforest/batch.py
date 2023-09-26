@@ -3,6 +3,7 @@ from .rforest import remainder_forest
 from sage.matrix.constructor import Matrix
 from sage.rings.fast_arith import prime_range
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 def batch_factorial(n, e, gamma):
     r"""
@@ -19,6 +20,7 @@ def batch_factorial(n, e, gamma):
     """
     R = ZZ["k"]
     M = Matrix(R, 1, 1, [R.gen()])
+    gamma = QQ(gamma)
     a = gamma.numerator()
     b = gamma.denominator()
     k = lambda p, a=a, b=b: -(-a * p // b)
@@ -50,6 +52,7 @@ def batch_harmonic(n, e, gamma, j, proj=False):
     y = R.gen()
     M = Matrix(R, [[y**j, 0], [1, y**j]])
 
+    gamma = QQ(gamma)
     a = gamma.numerator()
     b = gamma.denominator()
     k = lambda p, a=a, b=b: -(-a * p // b)
