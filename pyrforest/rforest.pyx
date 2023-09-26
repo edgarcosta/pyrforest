@@ -1,7 +1,6 @@
-# distutils: libraries = rforest
-# distutils: include_dirs = /usr/local/include
-# distutils: library_dirs = /usr/local/lib
-# distutils: extra_compile_args = -fPIC
+# distutils: language=c
+# clang c
+# Copyright 2023 Edgar Costa, Kiran Kedlaya
 
 r"""
 Wrapper for remainder forests.
@@ -18,6 +17,7 @@ from cysignals.signals cimport sig_on, sig_on_no_except, sig_off
 from libc.stdlib cimport malloc, free
 from sage.libs.gmp.mpz cimport (
     mpz_clear,
+    mpz_init,
     mpz_init_set,
     mpz_init_set_ui,
 )
@@ -25,7 +25,6 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.functions.log import log
 from sage.functions.other import ceil
 from sage.matrix.constructor import Matrix
-from sage.rings.fast_arith import prime_range
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -445,57 +444,3 @@ def remainder_forest_generic_prime(M, d, e, k, indices=None, m=None, kbase=0, V=
     if ansdict:
         return None
     return ans, R1
-
-def batch_factorial(n, e, a, b):
-    r"""
-    Amortized computation of factorials.
-
-    INPUT::
-
-     - `n`: bound on primes
-     - `e`: order of the series expansion
-     - `a/b`: a rational number
-
-    OUTPUT::
-       A dict whose value at a prime `p` equals (ceil(a/b*p)-1)! mod p^e.
-    """
-    R = ZZ['k']
-    M = Matrix(R, 1, 1, [R.gen()])
-    k = lambda p, a=a, b=b: -(-a*p//b)
-    m = lambda p, e=e: p**e
-
-    ans = remainder_forest(M, m, k, kbase=1, indices=prime_range(n))
-    return {p: ans[p][0,0] for p in prime_range(n)}
-
-def batch_harmonic(n, e, a, b, j, proj=False):
-    r"""
-    Amortized computation of harmonic sums.
-
-    INPUT::
-
-     - `n`: bound on primes
-     - `e`: order of the series expansion
-     - `a/b`: a rational number
-     - `j`: a positive integer
-
-    OUTPUT::
-       A dict whose value at a prime `p` is the truncated harmonic sum
-          \sum_{k=1}^{ceil(a/b*p)-1} k^{-j} mod p^e.
-
-       If `proj` is True, instead return pairs (x,y) representing x,y mod p^e.
-    """
-    # Represent summation as a 2x2 matrix.
-    R = ZZ['k']
-    y = R.gen()
-    M = Matrix(R, [[y**j, 0], [1, y**j]])
-
-    k = lambda p, a=a, b=b: -(-a*p//b)
-    m = lambda p, e=e: p**e
-    V = Matrix(ZZ, [[0,1]])
-
-    ans = remainder_forest(M, m, k, kbase=1, indices=prime_range(n), V=V)
-    if proj:
-        return ans
-    return {p: mat[0,0]*mat[0,1].inverse_mod(p**e) for p, mat in ans}
-
-
