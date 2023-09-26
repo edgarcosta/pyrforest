@@ -100,10 +100,9 @@ static inline uint64_t mod62_div_by2(uint64_t x, uint64_t p)
 // x * y mod p, stupid hardware division
 static inline uint64_t mod62_mul(uint64_t x, uint64_t y, uint64_t p)
 {
-  uint64_t z0, z1, q, r;
+  uint64_t z0, z1, __attribute__((unused)) q, r; // silence pedantic "unused-but-set-variable"
   MUL_WIDE(z1, z0, x, y);
   DIV_WIDE(q, r, z1, z0, p);
-  q = q;      // silence pedantic "unused-but-set-variable"
   return r;
 }
 
@@ -113,9 +112,8 @@ static inline uint64_t mod62_pinv(uint64_t p)
 {
   assert(mod62_valid(p));
 
-  uint64_t q, r;
+  uint64_t q, __attribute__((unused)) r; // silence pedantic "unused-but-set-variable"
   DIV_WIDE(q, r, -4*p, 0, 4*p);
-  r = r;      // silence pedantic "unused-but-set-variable"
   return q;
 }
 

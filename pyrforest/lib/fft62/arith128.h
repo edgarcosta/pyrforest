@@ -85,9 +85,8 @@ typedef unsigned int uint128_t __attribute__((mode(TI)));
 
 static inline uint64_t MUL_HI(uint64_t x, uint64_t y)
 {
-  uint64_t z1, z0;
+  uint64_t z1, __attribute__((unused)) z0;
   MUL_WIDE(z1, z0, x, y);
-  z0 = z0;     // silence pedantic "unused-but-set-variable"
   return z1;
 }
 
