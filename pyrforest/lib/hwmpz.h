@@ -212,7 +212,7 @@ static inline long mpz_row_height (mpz_t *A, int d) { return mpz_vec_height (A, 
 static inline long mpz_matrix_height (mpz_t *A, int d) { return mpz_vec_height (A, d*d); }
 
 static inline long mpz_row_bits (mpz_t *A, int d)
-    { long b; for ( int i = 0, b = 0 ; i < d ; i++ ) { b += mpz_height(A[i]); } return b; }
+    { long b=0; for ( int i = 0 ; i < d ; i++ ) { b += mpz_height(A[i]); } return b; }
 static inline long mpz_matrix_bits (mpz_t *A, int d) { return mpz_row_bits (A, d*d); }
 
 // only reduces if it seems worthwhile
