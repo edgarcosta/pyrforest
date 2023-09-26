@@ -40,7 +40,7 @@ rforest_sources = [
 ]
 
 
-pyrforest = Extension(
+rforest = Extension(
     "pyrforest.rforest",
     language="c",
     sources=[
@@ -69,7 +69,7 @@ setup(
     license="MIT",
     description="Wrapper for C library rforest to compute remainder forests",
     long_description=readfile("README.md"),  # get the long description from the README
-    version=readfile("VERSION"),  # the VERSION file is shared with the documentation
+    version=readfile("VERSION").strip(),  # the VERSION file is shared with the documentation
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -89,7 +89,7 @@ setup(
     install_requires=["cython", "sagemath", "sphinx"],
     packages=["pyrforest"],
     include_package_data=False,
-    ext_modules=cythonize([pyrforest]),
+    ext_modules=cythonize([rforest]),
     cmdclass={"test": SageTest}  # adding a special setup command for tests
     # ext_modules = extensions,
     # cmdclass = {'test': SageTest, 'build_ext': Cython.Build.build_ext} # adding a special setup command for tests and build_ext
