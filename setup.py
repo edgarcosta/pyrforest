@@ -2,7 +2,6 @@
 ## -*- encoding: utf-8 -*-
 
 import os
-import re
 import sys
 from setuptools import setup
 from codecs import open  # To open the README file with proper encoding
@@ -31,7 +30,7 @@ path = os.path.dirname(os.path.abspath(__file__))
 lib_path = os.path.join(path, "pyrforest/lib")
 allfiles_in_lib = [
     os.path.relpath(os.path.join(dp, f), path)
-    for dp, dn, fn in os.walk(os.path.expanduser(lib_path))
+    for dp, _, fn in os.walk(os.path.expanduser(lib_path))
     for f in fn
 ]
 
@@ -69,7 +68,9 @@ setup(
     license="MIT",
     description="Wrapper for C library rforest to compute remainder forests",
     long_description=readfile("README.md"),  # get the long description from the README
-    version=readfile("VERSION").strip(),  # the VERSION file is shared with the documentation
+    version=readfile(
+        "VERSION"
+    ).strip(),  # the VERSION file is shared with the documentation
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
