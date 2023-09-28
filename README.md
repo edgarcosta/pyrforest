@@ -13,7 +13,7 @@ sage -pip install --upgrade  git+https://github.com/edgarcosta/pyrforest.git@mas
 If you don't have permissions to install it system wide, please add the flag ``--user`` to install it just for you.
 
 ```
-sage -pip install --upgrade  git+https://github.com/edgarcosta/pyrforest.git@master
+sage -pip install --user --upgrade  git+https://github.com/edgarcosta/pyrforest.git@master
 ```
 
 
