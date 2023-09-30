@@ -13,7 +13,7 @@ and `k_i` and `m_i` are sequences of integers.
 
 from collections import defaultdict
 from cython cimport sizeof
-from cysignals.signals cimport sig_on, sig_on_no_except, sig_off
+from cysignals.signals cimport sig_on, sig_off
 from libc.stdlib cimport malloc, free
 from sage.libs.gmp.mpz cimport (
     mpz_clear,
@@ -211,7 +211,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
 
     try:
         # Call rforest.
-        sig_on_no_except()
+        sig_on()
         mproduct(z, m1, n)
         rforest(A1, V1, rows, M1, deg, dim, m1, kbase1, k1, n, z, kappa1)
         sig_off()
