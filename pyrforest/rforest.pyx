@@ -11,7 +11,6 @@ where `M` is a square matrix over `\ZZ[x]`, `V` is a matrix over `\ZZ`,
 and `k_i` and `m_i` are sequences of integers.
 """
 
-from collections import defaultdict
 from cython cimport sizeof
 from cysignals.signals cimport sig_on, sig_on_no_except, sig_off
 from libc.stdlib cimport malloc, free
@@ -63,6 +62,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
     `(p-1)! \equiv -1 \pmod{p}`, and identify the primes for which the
     congruence holds modulo `p^2` (these are called Wilson primes)::
 
+        sage: from pyrforest import remainder_forest
         sage: P.<x> = ZZ[]
         sage: M = Matrix([x])
         sage: m = [p^2 for p in prime_range(600)]
@@ -267,6 +267,7 @@ def inflate_matrix(M, vars, e):
 
     EXAMPLES::
 
+        sage: from pyrforest.rforest import inflate_matrix
         sage: R.<x,y> = PolynomialRing(ZZ, 2)
         sage: M = Matrix([[x+y, x*y], [x-y, 1]])
         sage: inflate_matrix(M, [y], 2)
@@ -328,6 +329,7 @@ def deflate_matrix(M, vars, e, R1=None):
 
     EXAMPLES::
 
+        sage: from pyrforest.rforest import inflate_matrix, deflate_matrix
         sage: R.<x,y> = PolynomialRing(ZZ, 2)
         sage: M = Matrix([[x+y, x*y], [x-y, 1]])
         sage: deflate_matrix(inflate_matrix(M, [y], 2), [y], 2) == M
@@ -388,6 +390,7 @@ def remainder_forest_generic_prime(M, d, e, k, indices=None, m=None, kbase=0, V=
 
     EXAMPLES::
 
+        sage: from pyrforest import remainder_forest_generic_prime
         sage: P.<x,y,z> = ZZ[]
         sage: M = Matrix([[x+y+1,z],[y+z,1]])
         sage: indices = prime_range(2, 50)
