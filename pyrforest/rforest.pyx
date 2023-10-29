@@ -12,7 +12,7 @@ and `k_i` and `m_i` are sequences of integers.
 """
 
 from cython cimport sizeof
-from cysignals.signals cimport sig_on, sig_on_no_except, sig_off
+from cysignals.signals cimport sig_on, sig_off
 from libc.stdlib cimport malloc, free
 from sage.libs.gmp.mpz cimport (
     mpz_clear,
@@ -30,7 +30,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 
-cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=None, projective=False):
+cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=None,  cutoff=None, projective=False):
     r"""
     Compute modular reductions of matrix products using a remainder forest.
 
@@ -45,7 +45,8 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
      - ``V``: a matrix of integers (optional). If omitted, use the identity matrix.
      - ``ans``: a dict of matrices (optional).
      - ``kappa``: a tuning parameter (optional). This controls the number of trees in the forest.
-     - ``projective``: a boolean. If True, the answer is only defined up to a scalar multiple.
+     - `cutoff`: an integer (optional). If specified, answers are truncated to this many columns (counting from the left).
+     - ``projective``: a boolean (optional). If True, the answer is allowed to be off by a scalar multiple.
 
     OUTPUT::
 
@@ -100,15 +101,12 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
         True
     """
     cdef:
-        mpz_t *A1
-        mpz_t *V1
-        mpz_t *M1
-        mpz_t *m1
-        int rows, deg, dim, kappa1, proj
-        bint mdict, kdict, ansdict, errorflag
+        int rows, deg, dim, kappa1, numcols
+        bint mdict, kdict, ansdict, errorflag, proj
         Integer tmp
         long *k1
         long n, i, j, j2, t, kbase1
+        mpz_t *A1, *V1, *M1, *m1
         mpz_t z
 
     # Sanitize input.
@@ -142,11 +140,11 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
                 continue
             deg = max(deg, M[i,j].degree())
 
+    # Translate other inputs into C variables
     kbase1 = kbase
-    proj = 1 if projective else 0
+    proj = projective
     ansdict = (ans is not None)
-    if not ansdict:
-        ans = []
+    numcols = dim if cutoff is None else cutoff
 
     # Allocate and set input variables.
     m1 = <mpz_t *>malloc(n*sizeof(mpz_t))
@@ -211,7 +209,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
 
     try:
         # Call rforest.
-        sig_on_no_except()
+        sig_on()
         mproduct(z, m1, n)
         rforest(A1, V1, rows, M1, deg, dim, m1, kbase1, k1, n, z, kappa1)
         sig_off()
@@ -221,15 +219,18 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
 
         if indices is None:
             indices = range(n)
+        if not ansdict:
+            ans = []
         tmp = Integer(0)
-        tmp_mat = Matrix(ZZ, rows, dim)
+        tmp_mat = Matrix(ZZ, rows, numcols)
         t = 0
         for i in range(n):
             for j in range(rows):
-                for j1 in range(dim):
+                for j1 in range(numcols):
                     tmp.set_from_mpz(A1[t])
                     tmp_mat[j,j1] = tmp
                     t += 1
+                t += dim - numcols
             if ansdict:
                 ans[indices[i]] *= tmp_mat
             else:
@@ -237,7 +238,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
         if not ansdict:
             ans = dict(zip(indices, ans))
 
-    # Free memory.
+    # Free malloc-ed memory, even if an exception was raised.
 
     finally:
         for i in range(dim*dim*(deg+1)):
