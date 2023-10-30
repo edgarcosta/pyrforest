@@ -86,7 +86,11 @@ mpz_t *mpz_rmatrix_mult_fft (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w
 
     // transform input matrices
     AT = hw_malloc (r*d*sizeof(mpzfft_t));
-    for ( int i = 0 ; i < r*d ; i++) { mpzfft_init(AT[i], &params);  mpzfft_fft (AT[i], A[i], mpzfft_threads); }
+    for ( int i = 0 ; i < r*d ; i++) { 
+        mpzfft_init(AT[i], &params);
+        if (!reps1 || (reps1[i] == -1) ) { mpzfft_fft (AT[i], A[i], mpzfft_threads); }
+        else { mpzfft_set(AT[i], AT[reps1[i]], mpzfft_threads); }
+    }
     BT = hw_malloc (d*d*sizeof(mpzfft_t));
     for ( int i = 0 ; i < d*d ; i++ ) {
         if (!reps2 || (reps2[i] == -1) ) {
@@ -103,7 +107,11 @@ mpz_t *mpz_rmatrix_mult_fft (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w
     for ( int i = 0 ; i < d*d ; i++ ) {
         if (!reps2 || (reps2[i] == -1) ) { mpzfft_clear (BT[i]); }
     }
-    for ( int i = 0 ; i < r*d ; i++ ) { mpzfft_ifft (C[i], AT[i], mpzfft_threads); mpzfft_clear (AT[i]); }
+    for ( int i = 0 ; i < r*d ; i++ ) { 
+        if (!reps1 || (reps1[i] == -1) ) { mpzfft_ifft (C[i], AT[i], mpzfft_threads); }
+        else { mpz_set(C[i], C[reps1[i]]); }
+        mpzfft_clear (AT[i]); 
+    }
 
     hw_free (AT, r*d*sizeof(mpzfft_t));
     hw_free (BT, d*d*sizeof(mpzfft_t));
