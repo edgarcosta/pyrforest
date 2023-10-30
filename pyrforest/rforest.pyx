@@ -30,7 +30,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 
-cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=None,  cutoff=None, projective=False):
+cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=None,  cutoff=None, projective=False, repeated_entries=None):
     r"""
     Compute modular reductions of matrix products using a remainder forest.
 
@@ -102,6 +102,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
     """
     cdef:
         int rows, deg, dim, kappa1, numcols
+        int *reps
         bint mdict, kdict, ansdict, errorflag, proj
         Integer tmp
         long *k1
@@ -195,6 +196,13 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
                 mpz_init_set(V1[t], tmp.value)
             t += 1
 
+    if repeated_entries:
+        reps = <int *>malloc(dim*dim*sizeof(int))
+        for i in range(dim*dim):
+                reps[i] = repeated_entries[i]
+    else:
+        reps = NULL
+
     if kappa is None:
         kappa1 = 1 if n <= 1 else ceil(log(log(n,2),2)) + 1
     else:
@@ -211,7 +219,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
         # Call rforest.
         sig_on()
         mproduct(z, m1, n)
-        rforest(A1, V1, rows, M1, deg, dim, m1, kbase1, k1, n, z, kappa1)
+        rforest(A1, V1, rows, M1, deg, dim, m1, kbase1, k1, n, z, kappa1, reps)
         sig_off()
 
         # Retrieve answers. If ans is specified, we assume it is a dict of integer matrices
@@ -254,6 +262,8 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
         for i in range(rows*dim*n):
             mpz_clear(A1[i])
         free(A1)
+        if repeated_entries:
+            free(reps)
         mpz_clear(z)
 
     if not ansdict:

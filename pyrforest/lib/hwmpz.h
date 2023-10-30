@@ -172,9 +172,9 @@ static inline void mpz_matrix_mult_naive (mpz_t *C, mpz_t *A, mpz_t *B, int d, m
 // computes C=AB, where A, B, and C are square d-by-d matrices, using naive d^3 alg, w is a work variable (helps to avoid reallocs during computation)
 // initializes the entries of C as it computes them
 // NO ALIASING
-mpz_t *mpz_rmatrix_mult_fft (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w);
-static inline mpz_t *mpz_row_matrix_mult_fft (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz_t w) { return mpz_rmatrix_mult_fft (C, A, 1, B, d, w); }
-static inline mpz_t *mpz_matrix_mult_fft (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz_t w) { return mpz_rmatrix_mult_fft (C, A, d, B, d, w); }
+mpz_t *mpz_rmatrix_mult_fft (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w, int *reps);
+static inline mpz_t *mpz_row_matrix_mult_fft (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz_t w) { return mpz_rmatrix_mult_fft (C, A, 1, B, d, w, NULL); }
+static inline mpz_t *mpz_matrix_mult_fft (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz_t w) { return mpz_rmatrix_mult_fft (C, A, d, B, d, w, NULL); }
 
 // computes C=AB mod m, where A and C are r-by-d matrices and B, is a d-by-d matrices, using naive rd^2 alg, w is a work variable (helps to avoid reallocs during computation)
 // ALIASING NOT ALLOWED
@@ -296,19 +296,19 @@ static inline void mpz_row_matrix_mult_inplace (mpz_t *A, mpz_t *B, int d, mpz_t
     { mpz_row_matrix_mult (w, A, B, d, w[d]); mpz_vec_set (A, w, d); }
 
 // computes C = AB, where A is an r x d matrix (r row vectors) and B is a d x d matrix, C cannot alias A or B!
-static inline void mpz_rmatrix_mult (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w)
+static inline void mpz_rmatrix_mult (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w, int *reps)
 {
     if ( d == 1 ) { mpz_mul (C[0], A[0], B[0]); return; }
     long s = (r+d)*d*(long)mpz_mat_fft_crossover(d); // we might want to make this depend on r
     if ( ! hw_disable_fft && mpz_vec_total_size(A,r*d) + mpz_vec_total_size(B,d*d) > s ) {
-        mpz_rmatrix_mult_fft (C, A, r, B, d, w);
+        mpz_rmatrix_mult_fft (C, A, r, B, d, w, reps);
     } else {
         mpz_rmatrix_mult_naive (C, A, r, B, d, w);
     }
 }
 
 // computes C = AB where A and B are d x d matrices, C cannot alias A or B
-static inline void mpz_matrix_mult (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz_t w) { mpz_rmatrix_mult (C, A, d, B, d, w); }
+static inline void mpz_matrix_mult (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz_t w) { mpz_rmatrix_mult (C, A, d, B, d, w, NULL); }
 
 // computes C = AB mod m,  where A is a 1 x d matrix (row vector) and B is a d x d matrix, C cannot alias A!
 static inline void mpz_row_matrix_mult_mod (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz_t m, mpz_t w)
@@ -332,11 +332,11 @@ static inline void mpz_matrix_mult_mod (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz
 
 // computes C=AB mod m, where A is an r x d matrix (r row vectors) and B is a d x d matrix, C cannot alias A or B!
 static inline void mpz_rmatrix_mult_mod (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t m, mpz_t w)
-    { mpz_rmatrix_mult (C, A, r, B, d, w); mpz_row_mod (C, C, r*d, m); }
+    { mpz_rmatrix_mult (C, A, r, B, d, w, NULL); mpz_row_mod (C, C, r*d, m); }
 
 // computes A=AB mod m, where A is an r x d matrix (r row vectors) and B is a d x d matrix, w points to r*d+1 mpz_t's
-static inline void mpz_rmatrix_mult_mod_inplace (mpz_t *A, int r, mpz_t *B, int d, mpz_t m, mpz_t *w)
-    { mpz_rmatrix_mult (w, A, r, B, d, w[r*d]); mpz_row_mod (A, w, r*d, m); }
+static inline void mpz_rmatrix_mult_mod_inplace (mpz_t *A, int r, mpz_t *B, int d, mpz_t m, mpz_t *w, int *reps)
+    { mpz_rmatrix_mult (w, A, r, B, d, w[r*d], reps); mpz_row_mod (A, w, r*d, m); }
 
 // destructively computes the product of  an array of n mpz_t's and puts the result in P
 static inline void mpz_vec_product (mpz_t P, mpz_t m[], long n)

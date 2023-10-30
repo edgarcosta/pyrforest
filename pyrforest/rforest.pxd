@@ -14,4 +14,5 @@ cdef extern from "<rforest.h>":
                   long *k,    # array of n values of k
                   long n,     # number of moduli and rows*dim outputs
                   mpz_t z,    # integer divisible by product of the moduli
-                  int kappa)  # log_2 of number of trees in the forest
+                  int kappa,  # log_2 of number of trees in the forest
+                  int *mask)  # redundant entries of M

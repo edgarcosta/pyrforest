@@ -30,7 +30,8 @@ void rforest (mpz_t *A,   // array of size rows*dim*n (outputs)
               long *k,    // array of n values of k range endpoints
               long n,     // number of moduli and rows*dim outputs
               mpz_t z,    // integer divisible by product of the moduli
-              int kappa); // log_2 of number of trees in the forest
+              int kappa,  // log_2 of number of trees in the forest
+              int *reps); // specify repeated entries of products (or NULL)
 
 // computes z = prod_i=0^(n-1) m[i] using a product tree
 void mproduct (mpz_t z, mpz_t *m, long n);

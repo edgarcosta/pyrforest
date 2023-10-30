@@ -75,7 +75,7 @@ static inline size_t mpz_rmatrix_product_max_bits (mpz_t *A, int r, mpz_t *B, in
     return GMP_NUMB_BITS*(2*m+1);   // note that the +1 limb more than covers the extra log(d) bits due to additions
 }
 
-mpz_t *mpz_rmatrix_mult_fft (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w)
+mpz_t *mpz_rmatrix_mult_fft (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w, int *reps)
 {
     mpzfft_params_t params;
     mpzfft_t *AT, *BT;
@@ -85,9 +85,13 @@ mpz_t *mpz_rmatrix_mult_fft (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w
 
     // transform input matrices
     AT = hw_malloc (r*d*sizeof(mpzfft_t));
-    for ( int i = 0 ; i < r*d; i++) { mpzfft_init(AT[i], &params);  mpzfft_fft (AT[i], A[i], mpzfft_threads); }
+    for ( int i = 0 ; i < r*d ; i++) { mpzfft_init(AT[i], &params);  mpzfft_fft (AT[i], A[i], mpzfft_threads); }
     BT = hw_malloc (d*d*sizeof(mpzfft_t));
-    for ( int i = 0 ; i < d*d; i++) { mpzfft_init(BT[i], &params);  mpzfft_fft (BT[i], B[i], mpzfft_threads); }
+    for ( int i = 0 ; i < d*d ; i++) {
+        mpzfft_init(BT[i], &params);
+        if ( reps && (reps[i] != -1) ) mpzfft_set (BT[i], BT[reps[i]], mpzfft_threads);
+        else mpzfft_fft (BT[i], B[i], mpzfft_threads);
+    }
 
     // multiply matrices of Fourier coefficients
     mpzfft_matrix_mul(AT, AT, BT, r, d, d, mpzfft_threads);

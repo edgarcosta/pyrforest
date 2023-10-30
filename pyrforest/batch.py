@@ -53,13 +53,13 @@ def batch_harmonic(n, e, gamma, j, proj=False):
     M = Matrix(R, [[y**j, 0], [1, y**j]])
 
     gamma = QQ(gamma)
-    a = gamma.numerator()
-    b = gamma.denominator()
+    a, b = gamma.as_integer_ratio()
     k = lambda p, a=a, b=b: -(-a * p // b)
     m = lambda p, e=e: p**e
     V = Matrix(ZZ, [[0, 1]])
+    repeated_entries = [-1,-1,-1,0]
 
-    ans = remainder_forest(M, m, k, kbase=1, indices=prime_range(n), V=V)
+    ans = remainder_forest(M, m, k, kbase=1, indices=prime_range(n), V=V, repeated_entries=repeated_entries)
     if proj:
         return ans
     return {p: mat[0, 0] * mat[0, 1].inverse_mod(p**e) for p, mat in ans.items()}

@@ -66,7 +66,7 @@ int main (int argc, char *argv[])
 
     printf ("Calling rforest with rows=%d, deg=%d, dim=%d, n=%ld, kappa=%d\n", rows, deg, dim, n, kappa);
     double t = get_time();
-    rforest (A, V, rows, M, deg, dim, m, 1, k, n, z, kappa);
+    rforest (A, V, rows, M, deg, dim, m, 1, k, n, z, kappa, NULL);
     printf ("Took %.3fs\n", get_time()-t);
 
     // sanity check that A values are all reduced
