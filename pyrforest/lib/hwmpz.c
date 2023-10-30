@@ -37,7 +37,7 @@ static inline void hw_mpzfft_clear ()
 void hw_mpz_setup (void) { hw_mpzfft_setup ();}
 void hw_mpz_clear (void) { hw_mpzfft_clear (); }
 
-mpz_t *mpz_vec_mod_fft (mpz_t *A, mpz_t *B, long n, mpz_t m)
+mpz_t *mpz_vec_mod_fft (mpz_t *A, mpz_t *B, long n, mpz_t m, int *reps)
 {
     mpzfft_mod_t mod;
     long b, c;
@@ -46,7 +46,7 @@ mpz_t *mpz_vec_mod_fft (mpz_t *A, mpz_t *B, long n, mpz_t m)
     b = mpz_sizeinbase (m, 2);
     for ( long i = 0 ; i < n ; i++ ) { c = mpz_sizeinbase (B[i], 2);  if ( c > b ) b = c; }
     mpzfft_mod_init (&mod, b, m, HW_ZZ_PRIMES, &zz_moduli, mpzfft_threads);
-    for ( long i = 0 ; i < n ; i++ ) { mpzfft_mod_mod (&mod, A[i], B[i], 1); }
+    for ( long i = 0 ; i < n ; i++ ) { mpzfft_mod_mod (&mod, A[i], (!reps || reps[i] == -1)?B[i]:B[reps[i]], 1); }
     mpzfft_mod_clear (&mod);
     return A;
 }

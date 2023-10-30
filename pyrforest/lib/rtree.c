@@ -107,14 +107,14 @@ void rtree_reduce_rows (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, i
     R = mpz_vec_alloc_and_init (r*d);
     M = mpz_vec_alloc_and_init (d*d);
     mpz_init(w);
-    mpz_vec_mod (Rtree[0], V, r*d, mtree[0][0]);
+    mpz_vec_mod (Rtree[0], V, r*d, mtree[0][0], NULL);
     for ( i = 1 ; i <= ell-4 ; i++ ) {
         for (  long j = (1L<<i)-1 ; j>=0 ; j-- ) {
             if ( !(j&1) ) {
-                mpz_vec_mod (Rtree[i]+j*r*d, Rtree[i-1]+(j/2)*r*d, r*d, mtree[i][j]);
+                mpz_vec_mod (Rtree[i]+j*r*d, Rtree[i-1]+(j/2)*r*d, r*d, mtree[i][j], NULL);
             } else {
-                mpz_vec_mod (M, Mtree[i]+(j-1)*d*d, d*d, mtree[i][j]);
-                mpz_vec_mod (R, Rtree[i-1]+(j/2)*r*d, r*d, mtree[i][j]);
+                mpz_vec_mod (M, Mtree[i]+(j-1)*d*d, d*d, mtree[i][j], reps);
+                mpz_vec_mod (R, Rtree[i-1]+(j/2)*r*d, r*d, mtree[i][j], NULL);
                 mpz_rmatrix_mult_mod (Rtree[i]+j*r*d, R, r, M, d, mtree[i][j], w, reps);
             }
         }

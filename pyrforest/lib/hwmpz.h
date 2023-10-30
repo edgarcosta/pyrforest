@@ -51,7 +51,7 @@ static inline long mpz_vec_max_size (mpz_t *A, long n) { long s, t;  s = 0; for 
 static inline long mpz_vec_total_size (mpz_t *A, long n) { long s;  s = 0; for ( long i = 0 ; i < n ; i++ ) s += mpz_size(A[i]);   return s;}
 
 static inline mpz_t *mpz_vec_mod_naive (mpz_t *A, mpz_t *B, long n, mpz_t m) { for (  long i = 0 ; i < n ; i++ ) { mpz_fdiv_r (A[i], B[i], m); } return A; }
-mpz_t *mpz_vec_mod_fft (mpz_t *A, mpz_t *B, long n, mpz_t m);
+mpz_t *mpz_vec_mod_fft (mpz_t *A, mpz_t *B, long n, mpz_t m, int *reps);
 static inline mpz_t *mpz_vec_mod_init_naive (mpz_t *A, mpz_t *B, long n, mpz_t m, mpz_t w)
     { for (  long i = 0 ; i < n ; i++ ) { mpz_fdiv_r (w, B[i], m); mpz_init_set (A[i], w); }  return A; }
 mpz_t *mpz_vec_mod_init_fft (mpz_t *A, mpz_t *B, long n, mpz_t m, mpz_t w);
@@ -216,7 +216,7 @@ static inline long mpz_row_bits (mpz_t *A, int d)
 static inline long mpz_matrix_bits (mpz_t *A, int d) { return mpz_row_bits (A, d*d); }
 
 // only reduces if it seems worthwhile
-static inline void mpz_vec_mod (mpz_t *A, mpz_t *B, long n, mpz_t m)
+static inline void mpz_vec_mod (mpz_t *A, mpz_t *B, long n, mpz_t m, int *reps)
 {
     int i;
     long max, tot, s;
@@ -226,7 +226,7 @@ static inline void mpz_vec_mod (mpz_t *A, mpz_t *B, long n, mpz_t m)
     if ( n == 1 ) { mpz_fdiv_r (A[0], B[0], m); return; }
     s = mpz_mod_fft_crossover(n);
     if ( ! hw_disable_fft && tot > n*s && mpz_size(m) > s ) {
-        mpz_vec_mod_fft (A, B, n, m);
+        mpz_vec_mod_fft (A, B, n, m, reps);
     } else {
         mpz_vec_mod_naive (A, B, n, m);
     }
@@ -241,7 +241,7 @@ static inline void mpz_vec_mod_hard (mpz_t *A, mpz_t *B, long n, mpz_t m)
     if ( n == 1 ) { mpz_fdiv_r (A[0], B[0], m); return; }
     s = mpz_mod_fft_crossover(n);
     if ( ! hw_disable_fft && tot > n*s && mpz_size(m) > s ) {
-        mpz_vec_mod_fft (A, B, n, m);
+        mpz_vec_mod_fft (A, B, n, m, NULL);
     } else {
         mpz_vec_mod_naive (A, B, n, m);
     }
@@ -257,20 +257,20 @@ static inline void mpz_vec_mod_inplace (mpz_t *A, long n, mpz_t m)
     if ( n == 1 ) { mpz_fdiv_r (A[0], A[0], m); return; }
     s = mpz_mod_fft_crossover(n);
     if ( ! hw_disable_fft && tot > n*s && mpz_size(m) > s ) {
-        mpz_vec_mod_fft (A, A, n, m);
+        mpz_vec_mod_fft (A, A, n, m, NULL);
     } else {
         mpz_vec_mod_naive (A, A, n, m);
     }
 }
 
 static inline void mpz_row_mod (mpz_t *A, mpz_t *B, int d, mpz_t m)
-    { mpz_vec_mod (A, B, d, m); }
+    { mpz_vec_mod (A, B, d, m, NULL); }
     
 static inline void mpz_rmatrix_mod (mpz_t *A, mpz_t *B, int r, int d, mpz_t m)
-    { mpz_vec_mod (A, B, r*d, m); }
+    { mpz_vec_mod (A, B, r*d, m, NULL); }
 
 static inline void mpz_matrix_mod (mpz_t *A, mpz_t *B, int d, mpz_t m)
-    { mpz_vec_mod (A, B, d*d, m); }
+    { mpz_vec_mod (A, B, d*d, m, NULL); }
 
 static inline void mpz_row_mod_inplace (mpz_t *A, mpz_t *B, int d, mpz_t m)
     { mpz_vec_mod_inplace (A, d, m); }
