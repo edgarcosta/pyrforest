@@ -57,13 +57,13 @@ void rforest (mpz_t *A, mpz_t *V, int rows, mpz_t *M, int deg, int dim, mpz_t *m
                 while ( k < nextk ) {
                     mpz_matrix_set (W0, Mk, dim);
                     mpz_poly_matrix_eval_si (W1, M, dim, deg, k++, w);
-                    mpz_matrix_mult (Mk, W0, W1, dim, w[0]);
+                    mpz_matrix_mult (Mk, W0, W1, dim, w[0], NULL, NULL);
                 }
             }
             for ( ; i < i1 ; i++, Mk += dim*dim ) mpz_matrix_set_one (Mk, dim); // pad with the identity matrix
 
             // Run the remainder tree algorithm: build/build/reduce
-            rtree_build (mtree, ell, 1);  rtree_build (Mtree, ell, dim);
+            rtree_build (mtree, ell, 1, NULL);  rtree_build (Mtree, ell, dim, reps);
             rtree_reduce_rows (Rtree, V, Mtree, mtree, ell, dim, rows, reps);
 
             // copy leaves of current tree to output -- use mpz_vec_mod_naive to force a hard mod (leaf values should be small)

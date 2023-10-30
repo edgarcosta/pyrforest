@@ -19,7 +19,7 @@ mpz_t **rtree_alloc (int ell, int n)
 }
 
 // given a tree of d x d matrices with level ell filled in, builds a product tree.
-void rtree_build (mpz_t **t, int ell, int d)
+void rtree_build (mpz_t **t, int ell, int d, int *reps)
 {
     mpz_t w;
     assert (ell >= 0 && d > 0);
@@ -27,7 +27,7 @@ void rtree_build (mpz_t **t, int ell, int d)
         return;
     }
     mpz_init2(w,(1<<ell)*mpz_matrix_height(t[ell]+(1<<(ell-1))*d*d,d));
-    for ( int i = ell-1 ; i >= 0 ; i-- )  for ( long j = (1L<<i)-1 ; j>=0 ; j-- ) mpz_matrix_mult (t[i]+j*d*d, t[i+1]+2*j*d*d, t[i+1]+(2*j+1)*d*d, d, w);
+    for ( int i = ell-1 ; i >= 0 ; i-- )  for ( long j = (1L<<i)-1 ; j>=0 ; j-- ) mpz_matrix_mult (t[i]+j*d*d, t[i+1]+2*j*d*d, t[i+1]+(2*j+1)*d*d, d, w, reps, reps);
     mpz_clear(w);
 }
 
@@ -42,7 +42,7 @@ void rtree_build_div (mpz_t **t, int ell, int d, mpz_t div)
     }
     mpz_init2(w,(1<<ell)*mpz_matrix_height(t[ell]+(1<<(ell-1))*d*d,d));
     for ( int i = ell-1 ; i >= 0 ; i-- ) for ( long j = (1L<<i)-1 ; j>=0 ; j-- )
-        { mpz_matrix_mult (t[i]+j*d*d, t[i+1]+2*j*d*d, t[i+1]+(2*j+1)*d*d, d, w); mpz_matrix_div (t[i]+j*d*d, d, div); }
+        { mpz_matrix_mult (t[i]+j*d*d, t[i+1]+2*j*d*d, t[i+1]+(2*j+1)*d*d, d, w, NULL, NULL); mpz_matrix_div (t[i]+j*d*d, d, div); }
     mpz_clear(w);
 }
 

@@ -12,7 +12,7 @@ void rtree_free (mpz_t **t, int ell, int n);
   Input:  M = rtree_alloc_init(ell,r*r) with M[ell][j] := M_j filled with r x r inputs for 0 <= j < 2^ell
   Output: M[i,j] = M[i+1][2*j] * M[i+1,j*2+1] for 0 <= i < ell and 0 <= j < 2^i
 */
-void rtree_build (mpz_t **Mtree, int ell, int r);
+void rtree_build (mpz_t **Mtree, int ell, int r, int *reps);
 void rtree_build_div (mpz_t **Mtree, int ell, int r, mpz_t div);    // div is an integer that will be removed from each pair-wise product (must exactly divide)
 
 /*
