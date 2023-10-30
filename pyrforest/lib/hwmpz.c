@@ -6,6 +6,7 @@
 #include "zzmem.h"
 #include "hwmem.h"
 #include "hwmpz.h"
+#include "string.h"
 
 #define HW_ZZ_PRIMES            4
 
@@ -87,18 +88,22 @@ mpz_t *mpz_rmatrix_mult_fft (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t w
     AT = hw_malloc (r*d*sizeof(mpzfft_t));
     for ( int i = 0 ; i < r*d ; i++) { mpzfft_init(AT[i], &params);  mpzfft_fft (AT[i], A[i], mpzfft_threads); }
     BT = hw_malloc (d*d*sizeof(mpzfft_t));
-    for ( int i = 0 ; i < d*d ; i++) {
-        mpzfft_init(BT[i], &params);
-        if ( reps && (reps[i] != -1) ) mpzfft_set (BT[i], BT[reps[i]], mpzfft_threads);
-        else mpzfft_fft (BT[i], B[i], mpzfft_threads);
+    for ( int i = 0 ; i < d*d ; i++ ) {
+        if (!reps || (reps[i] == -1) ) {
+            mpzfft_init(BT[i], &params);
+            mpzfft_fft (BT[i], B[i], mpzfft_threads);
+        }
+        else { memcpy(BT[i], BT[reps[i]], sizeof(mpzfft_t)); }
     }
 
     // multiply matrices of Fourier coefficients
     mpzfft_matrix_mul(AT, AT, BT, r, d, d, mpzfft_threads);
 
     // inverse transform results and cleanup
-    for ( int i = 0 ; i < d*d ; i++) { mpzfft_clear (BT[i]); }
-    for ( int i = 0 ; i < r*d ; i++) { mpzfft_ifft (C[i], AT[i], mpzfft_threads); mpzfft_clear (AT[i]); }
+    for ( int i = 0 ; i < d*d ; i++ ) {
+        if (!reps || (reps[i] == -1) ) { mpzfft_clear (BT[i]); }
+    }
+    for ( int i = 0 ; i < r*d ; i++ ) { mpzfft_ifft (C[i], AT[i], mpzfft_threads); mpzfft_clear (AT[i]); }
 
     hw_free (AT, r*d*sizeof(mpzfft_t));
     hw_free (BT, d*d*sizeof(mpzfft_t));
