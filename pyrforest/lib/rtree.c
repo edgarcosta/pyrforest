@@ -98,7 +98,7 @@ void rtree_reduce (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, int el
 }
 
 // given a product tree of d x d matrices and a product tree of moduli, and computes the remainder tree of r x d matrices starting from V
-void rtree_reduce_rows (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, int ell, int d, int r)
+void rtree_reduce_rows (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, int ell, int d, int r, int *reps)
 {
     mpz_t w;
     mpz_t *R, *M;
@@ -115,7 +115,7 @@ void rtree_reduce_rows (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, i
             } else {
                 mpz_vec_mod (M, Mtree[i]+(j-1)*d*d, d*d, mtree[i][j]);
                 mpz_vec_mod (R, Rtree[i-1]+(j/2)*r*d, r*d, mtree[i][j]);
-                mpz_rmatrix_mult_mod (Rtree[i]+j*r*d, R, r, M, d, mtree[i][j], w);
+                mpz_rmatrix_mult_mod (Rtree[i]+j*r*d, R, r, M, d, mtree[i][j], w, reps);
             }
         }
     }
@@ -127,7 +127,7 @@ void rtree_reduce_rows (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, i
             } else {
                 mpz_vec_mod_naive (R, Rtree[i-1]+(j/2)*r*d, r*d, mtree[i][j]);
                 // don't reduce the sibling matrix
-                mpz_rmatrix_mult_mod (Rtree[i]+j*r*d, R, r, Mtree[i]+(j-1)*d*d, d, mtree[i][j], w);
+                mpz_rmatrix_mult_mod (Rtree[i]+j*r*d, R, r, Mtree[i]+(j-1)*d*d, d, mtree[i][j], w, reps);
             }
         }
     }

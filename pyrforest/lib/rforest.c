@@ -64,7 +64,7 @@ void rforest (mpz_t *A, mpz_t *V, int rows, mpz_t *M, int deg, int dim, mpz_t *m
 
             // Run the remainder tree algorithm: build/build/reduce
             rtree_build (mtree, ell, 1);  rtree_build (Mtree, ell, dim);
-            rtree_reduce_rows (Rtree, V, Mtree, mtree, ell, dim, rows);
+            rtree_reduce_rows (Rtree, V, Mtree, mtree, ell, dim, rows, reps);
 
             // copy leaves of current tree to output -- use mpz_vec_mod_naive to force a hard mod (leaf values should be small)
             // note that i shifts by 1

@@ -331,8 +331,8 @@ static inline void mpz_matrix_mult_mod (mpz_t *C, mpz_t *A, mpz_t *B, int d, mpz
     { mpz_matrix_mult (C, A, B, d, w); mpz_matrix_mod (C, C, d, m); }
 
 // computes C=AB mod m, where A is an r x d matrix (r row vectors) and B is a d x d matrix, C cannot alias A or B!
-static inline void mpz_rmatrix_mult_mod (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t m, mpz_t w)
-    { mpz_rmatrix_mult (C, A, r, B, d, w, NULL); mpz_row_mod (C, C, r*d, m); }
+static inline void mpz_rmatrix_mult_mod (mpz_t *C, mpz_t *A, int r, mpz_t *B, int d, mpz_t m, mpz_t w, int *reps)
+    { mpz_rmatrix_mult (C, A, r, B, d, w, reps); mpz_row_mod (C, C, r*d, m); }
 
 // computes A=AB mod m, where A is an r x d matrix (r row vectors) and B is a d x d matrix, w points to r*d+1 mpz_t's
 static inline void mpz_rmatrix_mult_mod_inplace (mpz_t *A, int r, mpz_t *B, int d, mpz_t m, mpz_t *w, int *reps)

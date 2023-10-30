@@ -25,7 +25,7 @@ void rtree_build_div (mpz_t **Mtree, int ell, int r, mpz_t div);    // div is an
 void rtree_reduce (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, int ell, int r, mpz_t *w);
 
 // Same as rtree_reduce except now V is a rows*r matrix instead of a single row vector of length r
-void rtree_reduce_rows (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, int ell, int r, int rows);
+void rtree_reduce_rows (mpz_t **Rtree, mpz_t *V, mpz_t **Mtree, mpz_t **mtree, int ell, int r, int rows, int *reps);
 
 void rtree_remainders_d (mpz_t V[], mpz_t z, mpz_t C[], mpz_t M[], int d, mpz_t **mtree, int ell);
 
