@@ -34,7 +34,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
     r"""
     Compute modular reductions of matrix products using a remainder forest.
 
-    INPUT::
+    INPUT:
 
      - ``M``: a matrix of polynomials with integer coefficients.
      - ``m``: a list or dict of integers, or a function (see below)
@@ -48,7 +48,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
      - `cutoff`: an integer (optional). If specified, answers are truncated to this many columns (counting from the left).
      - ``projective``: a boolean (optional). If True, the answer is allowed to be off by a scalar multiple.
 
-    OUTPUT::
+    OUTPUT:
 
      - if ``ans`` is omitted, a dict ``l`` indexed by ``indices`` (or by default
        ``range(len(m))``) in which
@@ -57,7 +57,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
        ``ans[i]*(V*prod(M.apply_map(lambda x: x(j)) for j in range(kbase, k[i])) % m[i])``.
        Entries of ``ans`` whose keys do not appear in ``indices`` are unaffected.
 
-    EXAMPLES::
+    EXAMPLES:
 
     For every prime `p` up to 1000, we confirm Wilson's theorem that
     `(p-1)! \equiv -1 \pmod{p}`, and identify the primes for which the
@@ -236,7 +236,7 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
             else:
                 ans.append(tmp_mat.__copy__())
         if not ansdict:
-            ans = dict(zip(indices, ans))
+            return dict(zip(indices, ans))
 
     # Free malloc-ed memory, even if an exception was raised.
 
@@ -255,9 +255,6 @@ cpdef remainder_forest(M, m, k, kbase=0, indices=None, V=None, ans=None, kappa=N
             mpz_clear(A1[i])
         free(A1)
         mpz_clear(z)
-
-    if not ansdict:
-        return ans
 
 def inflate_matrix(M, vars, e):
     """
