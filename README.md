@@ -34,7 +34,7 @@ sage -pip install --user --upgrade  git+https://github.com/edgarcosta/pyrforest.
 
   Return a dict whose value at a prime $p$ is the truncated harmonic sum
   
-  $$ \sum_{k=1}^{\lceil \gamma p \rceil-1} k^{-j} mod p^e. $$
+$$ \sum_{k=1}^{\lceil \gamma p \rceil-1} k^{-j} mod p^e. $$
   
   If `proj` is True, instead return a $1 \times 2$ matrix $[x, y]$ representing $x/y \pmod{p^e}$.ƒ
 
