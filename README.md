@@ -26,15 +26,15 @@ sage -pip install --user --upgrade  git+https://github.com/edgarcosta/pyrforest.
 
 ### Examples of usage
 
-#### batch_factorial(n, e, gamma)
+- `batch_factorial(n, e, gamma)`
 
-Return a dict whose value at a prime $p$ equals $(\lceil \gamma p \rceil-1)! \pmod p^{e}$.
+  Return a dict whose value at a prime $p$ equals $(\lceil \gamma p \rceil-1)! \pmod p^{e}$.
  
-#### batch_harmonic(n, e, gamma, j, proj=False)
+- `batch_harmonic(n, e, gamma, j, proj=False)`
 
-Return a dict whose value at a prime $p$ is the truncated harmonic sum
-
-$$ \sum_{k=1}^{\lceil \gamma p \rceil-1} k^{-j} mod p^e. $$
-
-If `proj` is True, instead return a $1 \times 2$ matrix $[x, y]$ representing $x/y \pmod{p^e}$.ƒ
+  Return a dict whose value at a prime $p$ is the truncated harmonic sum
+  
+  $$ \sum_{k=1}^{\lceil \gamma p \rceil-1} k^{-j} mod p^e. $$
+  
+  If `proj` is True, instead return a $1 \times 2$ matrix $[x, y]$ representing $x/y \pmod{p^e}$.ƒ
 
