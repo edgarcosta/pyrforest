@@ -1,0 +1,50 @@
+name: Weekly Upstream Compatibility
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+
+      - name: Install SageMath
+        run: conda install -y sage
+
+      - name: Build and install pyrforest
+        run: sage -pip install --upgrade -e .
+
+      - name: Run doctests
+        run: sage -t --force-lib pyrforest
+
+      - name: Record SageMath version on failure
+        if: failure()
+        run: |
+          sage_version=$(sage --version | head -1)
+          cat > issue_body.md <<EOF
+          The weekly upstream compatibility check failed with **${sage_version}**.
+
+          [View the failed run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+
+      - name: Create or update issue
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Upstream: test failure with latest SageMath"
+          content-filepath: issue_body.md
+          labels: upstream

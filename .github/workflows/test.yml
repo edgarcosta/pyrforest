@@ -1,0 +1,34 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+
+      - name: Install SageMath
+        run: conda install -y sage
+
+      - name: Build and install pyrforest
+        run: sage -pip install --upgrade -e .
+
+      - name: Run doctests
+        run: sage -t --force-lib pyrforest
