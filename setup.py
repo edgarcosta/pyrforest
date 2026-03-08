@@ -95,11 +95,8 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],  # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords="sagemath rforest",
-    setup_requires=[
-        "cython",
-        "sagemath",
-    ],  # currently useless, see https://www.python.org/dev/peps/pep-0518/
-    install_requires=["cython", "sagemath", "sphinx"],
+    setup_requires=[],
+    install_requires=[],
     packages=["pyrforest"],
     include_package_data=False,
     ext_modules=cythonize([rforest], include_path=sage_include_directories()),
