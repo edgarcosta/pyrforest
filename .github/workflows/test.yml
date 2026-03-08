@@ -28,7 +28,7 @@ jobs:
         run: conda install -y sage
 
       - name: Build and install pyrforest
-        run: sage -pip install --upgrade -e .
+        run: pip install --no-build-isolation -e .
 
       - name: Run doctests
         run: sage -t --force-lib pyrforest
