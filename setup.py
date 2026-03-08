@@ -7,7 +7,11 @@ from setuptools import setup
 from codecs import open  # To open the README file with proper encoding
 from setuptools.command.test import test as TestCommand  # for tests
 from setuptools.extension import Extension
-from sage.env import sage_include_directories
+try:
+    from sage.config import get_include_dirs
+    sage_include_directories = lambda: [str(p) for p in get_include_dirs()]
+except ImportError:
+    from sage.env import sage_include_directories
 from Cython.Build import cythonize as cython_cythonize
 
 try:
@@ -98,7 +102,7 @@ setup(
     install_requires=["cython", "sagemath", "sphinx"],
     packages=["pyrforest"],
     include_package_data=False,
-    ext_modules=cythonize([rforest]),
+    ext_modules=cythonize([rforest], include_path=sage_include_directories()),
     cmdclass={"test": SageTest}  # adding a special setup command for tests
     # ext_modules = extensions,
     # cmdclass = {'test': SageTest, 'build_ext': Cython.Build.build_ext} # adding a special setup command for tests and build_ext
