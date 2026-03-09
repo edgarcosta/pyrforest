@@ -25,6 +25,16 @@ jobs:
       - name: Install SageMath
         run: conda install -y sage
 
+      - name: Match Cython version to SageMath
+        run: |
+          CYTHON_VERSION=$(sage -python -c "
+          import re, sage.rings.integer as m
+          with open(m.__file__, 'rb') as f:
+              match = re.search(rb'_cython_(\d+)_(\d+)_(\d+)', f.read())
+              print('.'.join(g.decode() for g in match.groups()))
+          ")
+          pip install "cython==${CYTHON_VERSION}"
+
       - name: Build and install pyrforest
         run: pip install --no-build-isolation -e .
 
