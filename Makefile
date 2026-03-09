@@ -12,22 +12,16 @@ build:
 	$(SAGE) -python setup.py build_ext
 
 install:
-	$(SAGE) -python setup.py install
+	$(SAGE) -pip install --no-build-isolation -e .
 
 sdist:
-	$(SAGE) -python setup.py sdist
+	$(SAGE) -python -m build --sdist --no-isolation
 
 test:
-	$(SAGE) -python setup.py test
+	$(SAGE) -t --force-lib $(PACKAGE)
 
-pip-install:
-	$(SAGE) -pip install --upgrade --no-index -v .
-
-pip-uninstall:
-	$(SAGE) -pip uninstall .
-
-pip-develop:
-	$(SAGE) -pip install --upgrade -e .
+uninstall:
+	$(SAGE) -pip uninstall $(PACKAGE)
 
 coverage:
 	$(SAGE) -coverage $(PACKAGE)/*
@@ -42,5 +36,4 @@ clean:
 	rm -rf build dist *.egg-info
 	rm -rf $(PACKAGE)/*.c
 
-
-.PHONY: all build install test coverage sdist pip-install pip-uninstall pip-develop clean doc doc-pdf
+.PHONY: all build install test coverage sdist uninstall clean doc doc-pdf

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0", "cython"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyrforest"
+version = "0.0.1"
+description = "Wrapper for C library rforest to compute remainder forests"
+readme = "README.md"
+license = "MIT"
+authors = [
+    {name = "Edgar Costa", email = "edgarc@mit.edu"},
+]
+keywords = ["sagemath", "rforest"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Homepage = "https://github.com/edgarcosta/pyrforest"
