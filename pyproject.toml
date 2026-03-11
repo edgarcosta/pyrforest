@@ -7,7 +7,7 @@ name = "pyrforest"
 version = "0.0.1"
 description = "Wrapper for C library rforest to compute remainder forests"
 readme = "README.md"
-license = "MIT"
+license = {text = "MIT"}
 authors = [
     {name = "Edgar Costa", email = "edgarc@mit.edu"},
 ]
