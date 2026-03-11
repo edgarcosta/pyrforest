@@ -5,13 +5,13 @@ This package is a simple wrapper for the [rforest](https://github.com/edgarcosta
 ## Install
 
 ```
-sage -pip install --no-build-isolation --upgrade git+https://github.com/edgarcosta/pyrforest.git@master
+sage -pip install --no-build-isolation --upgrade git+https://github.com/edgarcosta/pyrforest.git@main
 ```
 
 If you don't have permissions to install it system wide, please add the flag ``--user`` to install it just for you.
 
 ```
-sage -pip install --user --no-build-isolation --upgrade git+https://github.com/edgarcosta/pyrforest.git@master
+sage -pip install --user --no-build-isolation --upgrade git+https://github.com/edgarcosta/pyrforest.git@main
 ```
 
 ## Development
